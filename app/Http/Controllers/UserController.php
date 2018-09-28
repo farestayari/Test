@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\User;
+use App\Post;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Auth;
 use UxWeb\SweetAlert\SweetAlert;
@@ -60,8 +61,28 @@ class UserController extends Controller
     }
 
     public function showUserDashboard(){
-        return view ('userDashboard.dashboard');
+        return view ('userDashboard.dashboard',[
+            'posts'=>Post::all()
+        ]);
     }
+
+    public function showCreatePost(){
+        return view ('userDashboard.newPost');
+    }
+
+    public function handleCreatePost(Request $request){
+        $user = Auth::user();
+
+        Post::create([
+            'title'=>$request->title,
+            'content'=>$request->content,
+            'user_id'=>$user->id
+        ]);
+        SweetAlert::success('great', 'Your Post has been submitted with success !')->persistent('Fermer');
+        return redirect(route('showUserDashboard'));
+    }
+
+    
 
 
 
